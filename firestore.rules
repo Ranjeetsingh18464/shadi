@@ -1,0 +1,137 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: check if user owns the document
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    // Helper: check if user is admin/superadmin
+    function isAdmin() {
+      return isAuth() && request.auth.uid != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'superadmin', 'super-admin'];
+    }
+
+    // Helper: check if user is moderator or above
+    function isModerator() {
+      return isAuth() && request.auth.uid != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['moderator', 'admin', 'superadmin', 'super-admin'];
+    }
+
+    // Users collection (profiles for browsing)
+    match /users/{userId} {
+      // Any authenticated user can browse profiles (needed for matchmaking)
+      allow read: if isAuth();
+      
+      // Users can create their own document
+      allow create: if isOwner(userId);
+      
+      // Users can update their own data; admins/moderators can update any
+      allow update: if isOwner(userId) || isModerator();
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // Profiles collection (alternative collection)
+    match /profiles/{profileId} {
+      allow read: if isAuth();
+      allow create: if isOwner(profileId);
+      allow update: if isOwner(profileId) || isModerator();
+      allow delete: if isAdmin();
+    }
+
+    // Interests collection
+    match /interests/{interestId} {
+      allow read: if isAuth() && (
+        request.auth.uid == resource.data.senderId || 
+        request.auth.uid == resource.data.receiverId
+      );
+      allow create: if isAuth();
+      allow update: if isAuth() && (
+        request.auth.uid == resource.data.senderId || 
+        request.auth.uid == resource.data.receiverId || 
+        isModerator()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Conversations collection
+    match /conversations/{convId} {
+      allow read: if isAuth() && request.auth.uid in resource.data.participants;
+      allow create: if isAuth();
+      allow update: if isAuth() && request.auth.uid in resource.data.participants;
+      allow delete: if isAdmin();
+    }
+
+    // Messages collection
+    match /messages/{msgId} {
+      allow read: if isAuth();
+      allow create: if isAuth() && request.resource.data.senderId == request.auth.uid;
+      allow update: if isAuth() && (
+        request.auth.uid == resource.data.senderId ||
+        isModerator()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Notifications collection
+    match /notifications/{notifId} {
+      allow read: if isAuth() && request.auth.uid == resource.data.userId;
+      allow create: if isAuth();
+      allow update: if isAuth() && request.auth.uid == resource.data.userId;
+      allow delete: if isAdmin();
+    }
+
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isAuth() && (
+        request.auth.uid == resource.data.userId ||
+        isAdmin()
+      );
+      allow create: if isAuth();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Reports collection
+    match /reports/{reportId} {
+      allow read: if isModerator();
+      allow create: if isAuth();
+      allow update: if isModerator();
+      allow delete: if isAdmin();
+    }
+
+    // Subscription plans
+    match /subscriptionPlans/{planId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin settings
+    match /admin/{settingId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Blog collection
+    match /blog/{postId} {
+      allow read: if true;
+      allow write: if isModerator();
+    }
+
+    // Success stories
+    match /successStories/{storyId} {
+      allow read: if true;
+      allow create: if isAuth();
+      allow update: if isModerator();
+      allow delete: if isAdmin();
+    }
+  }
+}

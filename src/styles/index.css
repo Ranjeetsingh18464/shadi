@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :root {
+    --scrollbar-width: 8px;
+  }
+
+  ::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+  }
+}
+
+@layer components {
+  .gradient-primary {
+    @apply bg-gradient-to-r from-rose-500 to-pink-600;
+  }
+
+  .gradient-primary-hover {
+    @apply hover:from-rose-600 hover:to-pink-700;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fff1f2 100%);
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg hover:border-rose-100 dark:hover:border-rose-900 transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply gradient-primary text-white font-medium py-2.5 px-6 rounded-xl transition-all duration-200 
+           gradient-primary-hover active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium py-2.5 px-6 
+           rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 
+           dark:hover:bg-gray-600 transition-all duration-200 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply border-2 border-rose-500 text-rose-600 font-medium py-2.5 px-6 rounded-xl 
+           hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all duration-200 active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 
+           bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+           placeholder-gray-400 dark:placeholder-gray-500
+           focus:ring-2 focus:ring-rose-500 focus:border-transparent 
+           outline-none transition-all duration-200;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:ring-red-500;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300;
+  }
+
+  .badge-premium {
+    @apply badge bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 
+           dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300;
+  }
+
+  .tab-active {
+    @apply text-rose-600 border-b-2 border-rose-600 font-medium;
+  }
+
+  .tab-inactive {
+    @apply text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 
+           border-b-2 border-transparent hover:border-gray-300;
+  }
+
+  .glass-effect {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg;
+  }
+
+  .profile-image {
+    @apply w-20 h-20 rounded-full object-cover border-2 border-white shadow-md;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+}
